@@ -35,7 +35,7 @@ The key product decision was to optimize for defensibility rather than fluent te
 
 ## Demo video
 
-- Public YouTube URL: `<YOUTUBE-URL>`
+- Public YouTube URL: `https://youtu.be/NIZqhmvuu4w`
 - Recommended length: **3 minutes**
 - Recording script: [DEMO_VIDEO_SCRIPT.md](./DEMO_VIDEO_SCRIPT.md)
 - Required narration: explain the problem, show the full evidence-to-review flow, and state how Codex with GPT-5.6 was used.
