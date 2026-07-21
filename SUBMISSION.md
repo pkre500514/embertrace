@@ -42,7 +42,7 @@ The key product decision was to optimize for defensibility rather than fluent te
 
 ## Repository and judge access
 
-- Repository URL: `<REPOSITORY-URL>`
+- Repository URL: `https://github.com/pkre500514/embertrace`
 - Visibility: public, or private with these accounts invited: `testing@devpost.com` and `build-week-event@openai.com`
 - License: MIT, included as `LICENSE`
 - Run instructions and sample data: [README.md](./README.md)
