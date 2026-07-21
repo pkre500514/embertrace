@@ -4,7 +4,7 @@ Replace every `<PLACEHOLDER>` before submitting.
 
 ## Category
 
-Choose **Work and Productivity**. EmberTrace reduces the administrative reconstruction work that follows an incident while preserving human review and source traceability.
+Choose **Work & Productivity**. EmberTrace reduces the administrative reconstruction work that follows an incident while preserving human review and source traceability.
 
 ## Project description
 
