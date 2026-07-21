@@ -28,13 +28,15 @@ test("serves the EmberTrace application and static assets", async () => {
   });
 });
 
-test("keeps the AI adapter opt-in when no server key is configured", async () => {
+test("runs a clearly labelled local AI simulation when no server key is configured", async () => {
   await withServer(async (baseUrl) => {
     assert.equal((await fetch(baseUrl, { method: "POST" })).status, 405);
     assert.equal((await fetch(`${baseUrl}/missing-file`)).status, 404);
     const adapter = await fetch(`${baseUrl}/api/draft`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sourceIds: ["cad"] }) });
-    assert.equal(adapter.status, 503);
-    assert.equal((await adapter.json()).error, "AI_ADAPTER_NOT_CONFIGURED");
+    assert.equal(adapter.status, 200);
+    const result = await adapter.json();
+    assert.equal(result.mode, "local_simulation");
+    assert.match(result.draft.review_required[0], /deterministic simulation/);
   });
 });
 

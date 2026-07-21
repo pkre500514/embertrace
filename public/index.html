@@ -48,9 +48,8 @@
           <label for="crewNoteInput" class="micro" style="display:block;margin:13px 0 5px">OPTIONAL REDACTED CREW CLARIFICATION</label>
           <textarea id="crewNoteInput" rows="3" maxlength="1200" placeholder="Example: No civilian assessment documented in the available record." style="width:100%;resize:vertical;border:1px solid #dce4df;padding:9px;font:12px/1.5 Manrope"></textarea>
           <button class="primary" id="analyzeBtn">Cross-check evidence &amp; draft <b>→</b></button>
-          <label class="ai-option"><input type="checkbox" id="aiAssist"> Enhance this simulated draft with GPT-5.6</label>
-          <p class="micro">Optional server-side adapter: only selected simulated evidence is sent. Citations and human review gates remain required.</p>
-          <p class="micro">Without a server API key, the local offline drafting flow remains available.</p>
+          <label class="ai-option"><input type="checkbox" id="aiAssist"> Run AI-adapter draft</label>
+          <p class="micro">With `OPENAI_API_KEY`, this uses GPT-5.6. Without a key, it runs a clearly labelled local simulation so the complete review flow remains testable.</p>
         </aside>
 
         <section class="report-panel">

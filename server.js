@@ -40,7 +40,7 @@ function normalizeDraft(value, allowedSourceIds) {
 
 export function createOpenAIAdapter({ apiKey = process.env.OPENAI_API_KEY, fetchImpl = globalThis.fetch } = {}) {
   if (!apiKey) return null;
-  return async ({ selectedSourceIds, crewNotes }) => {
+  const adapter = async ({ selectedSourceIds, crewNotes }) => {
     const evidence = selectedSourceIds.map((id) => ({ id, text: sourceCatalog[id] }));
     if (crewNotes.length) evidence.push({ id: "note", text: `Crew clarifications (unverified until human review): ${crewNotes.join("\n")}` });
     const apiResponse = await fetchImpl("https://api.openai.com/v1/responses", {
@@ -60,9 +60,27 @@ export function createOpenAIAdapter({ apiKey = process.env.OPENAI_API_KEY, fetch
     if (!apiResponse.ok) throw new Error(`OpenAI request failed (${apiResponse.status})`);
     return normalizeDraft(JSON.parse((await apiResponse.json()).output_text), [...selectedSourceIds, ...(crewNotes.length ? ["note"] : [])]);
   };
+  adapter.mode = "gpt-5.6-terra";
+  return adapter;
 }
 
-export function createAppServer({ aiAdapter = createOpenAIAdapter() } = {}) {
+export function createLocalDemoAdapter() {
+  const adapter = async ({ selectedSourceIds, crewNotes }) => {
+    const has = (id) => selectedSourceIds.includes(id);
+    const usedSourceIds = [...selectedSourceIds, ...(crewNotes.length ? ["note"] : [])];
+    return {
+      summary: has("cad") ? "Local simulation: the selected dispatch record supports a response to a reported residential structure fire at approximately 14:02." : "Local simulation: no selected source supports a dispatch time or address.",
+      operations: has("camera") || has("radio") ? "Local simulation: selected camera or radio evidence supports documenting interior attack, knockdown, ventilation, and overhaul; a reviewer must confirm the final timeline." : "Local simulation: no selected source supports field operations.",
+      observations: has("photos") ? "Local simulation: selected scene photos support documenting smoke conditions and kitchen-area damage, but do not establish origin or cause." : "Local simulation: no selected scene photos support observations.",
+      review_required: ["This is a local, deterministic simulation—not a GPT-5.6 response.", "Confirm all missing fields and any crew clarification before supervisor review."],
+      used_source_ids: usedSourceIds
+    };
+  };
+  adapter.mode = "local_simulation";
+  return adapter;
+}
+
+export function createAppServer({ aiAdapter = createOpenAIAdapter() ?? createLocalDemoAdapter() } = {}) {
   return createServer(async (request, response) => {
     const pathname = new URL(request.url, "http://localhost").pathname;
     if (pathname === "/api/draft") {
@@ -73,7 +91,7 @@ export function createAppServer({ aiAdapter = createOpenAIAdapter() } = {}) {
         const selectedSourceIds = [...new Set(Array.isArray(requestedSourceIds) ? requestedSourceIds : [])].filter((id) => sourceIds.includes(id));
         if (!selectedSourceIds.length) return sendJson(response, 400, { error: "NO_EVIDENCE_SELECTED" });
         const crewNotes = (Array.isArray(requestedCrewNotes) ? requestedCrewNotes : []).filter((note) => typeof note === "string").map((note) => note.trim()).filter(Boolean).map((note) => note.slice(0, 1200)).slice(0, 5);
-        return sendJson(response, 200, { draft: await aiAdapter({ selectedSourceIds, crewNotes }) });
+        return sendJson(response, 200, { draft: await aiAdapter({ selectedSourceIds, crewNotes }), mode: aiAdapter.mode ?? "custom" });
       } catch (error) {
         return sendJson(response, 502, { error: "AI_DRAFT_FAILED", message: error instanceof Error ? error.message : "AI draft failed" });
       }

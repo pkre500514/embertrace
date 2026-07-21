@@ -35,14 +35,14 @@ Open <http://localhost:4173>. No package install, API key, account, upload, or n
 
 ### Optional GPT-5.6 adapter
 
-The default workflow is fully offline. To enable the optional **Enhance this simulated draft with GPT-5.6** control, set an API key only in the server environment and restart:
+The default workflow is fully offline. The **Run AI-adapter draft** control runs a visibly labelled local simulation with no key, so the complete evidence-to-review path is testable at no cost. To switch that same control to GPT-5.6, set an API key only in the server environment and restart:
 
 ```powershell
 $env:OPENAI_API_KEY="your_key_here"
 npm start
 ```
 
-The browser never receives the key. The server sends only the selected simulated evidence and any explicitly entered, redacted crew clarification to the Responses API using `gpt-5.6-terra`, requests a structured draft, validates its source IDs, and keeps the existing citation and human-review gates. Do not use real incident data in this demo adapter.
+The browser never receives the key. With a key, the server sends only the selected simulated evidence and any explicitly entered, redacted crew clarification to the Responses API using `gpt-5.6-terra`, requests a structured draft, validates its source IDs, and keeps the existing citation and human-review gates. Without a key, a deterministic local simulation is clearly identified in both the draft heading and review notice. Do not use real incident data in this demo adapter.
 
 ### Verify
 

@@ -31,6 +31,14 @@
 | 보고서의 대원 후속 메모 | 누적된 3개 항목을 보여준다. | `Clarifications become cited evidence — not invisible edits.` |
 | `확인 필요` 영역 | 민간인 상태 문구가 메모에 따라 바뀐 부분을 보여준다. | `Unknown fields stay visible until a human confirms them.` |
 
+## 1:35–1:55 · AI 어댑터
+
+| 화면 | 조작 | Screen caption |
+| --- | --- | --- |
+| `Run AI-adapter draft` 선택 | API 키가 없는 로컬 시뮬레이션으로 초안을 만든다. | `No API key: clearly labelled local simulation.` |
+| 결과 초안 | `LOCAL SIMULATION DRAFT`와 `REVIEW REQUIRED`를 보여준다. | `The same evidence and review contract remains testable for free.` |
+| 설명 카드 | 서버 키가 있으면 GPT-5.6 Terra로 전환됨을 보여준다. | `With a server-side key, the same adapter calls GPT-5.6.` |
+
 ## 1:35–2:20 · 근거 탐색
 
 | 화면 | 조작 | Screen caption |
