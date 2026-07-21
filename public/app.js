@@ -193,14 +193,17 @@ function draft() {
 const escapeHtml = (value) => String(value).replace(/[&<>"]/g, (character) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[character]);
 function renderAiDraft(draft) {
   const ko = language === "ko";
-  const links = draft.used_source_ids.map((id) => citation(evidenceDetails[language][id][0], id)).join(" ");
+  const links = draft.used_source_ids.map((id) => citation(evidenceDetails[language][id === "note" ? "note" : id][0], id === "note" ? "note" : id)).join(" ");
   const reviews = draft.review_required.length ? draft.review_required.map(escapeHtml).join("<br>") : (ko ? "모델 출력은 사람 검토가 필요합니다." : "Model output requires human review.");
   report.innerHTML = `<section class="report-section"><h3>${ko ? "사건 요약 · GPT-5.6 초안" : "INCIDENT SUMMARY · GPT-5.6 DRAFT"}</h3><p>${escapeHtml(draft.summary)} ${links}</p></section><section class="report-section"><h3>${ko ? "현장 활동" : "OPERATIONS"}</h3><p>${escapeHtml(draft.operations)}</p></section><section class="report-section"><h3>${ko ? "관찰 기록" : "OBSERVATIONS"}</h3><p>${escapeHtml(draft.observations)}</p></section><aside class="review"><b>${ko ? "확인 필요" : "REVIEW REQUIRED"}</b><br>${reviews}</aside>`;
   state.textContent = ko ? "GPT-5.6 초안 준비됨 · 사람 검토 필요" : "GPT-5.6 draft ready · human review required";
 }
 async function enhanceWithAi() {
   try {
-    const response = await fetch("/api/draft", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ sourceIds:[...selectedSources] }) });
+    const typedNote = $("#crewNoteInput").value.trim();
+    const crewNotes = [...selectedDemoNotes].map((index) => demoCrewNotes[language][index]);
+    if (typedNote) crewNotes.push(typedNote);
+    const response = await fetch("/api/draft", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ sourceIds:[...selectedSources], crewNotes }) });
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || result.error || "AI adapter unavailable");
     renderAiDraft(result.draft);

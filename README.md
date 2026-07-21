@@ -42,7 +42,7 @@ $env:OPENAI_API_KEY="your_key_here"
 npm start
 ```
 
-The browser never receives the key. The server sends only the selected simulated evidence to the Responses API using `gpt-5.6-terra`, requests a structured draft, validates its source IDs, and keeps the existing citation and human-review gates. Do not use real incident data in this demo adapter.
+The browser never receives the key. The server sends only the selected simulated evidence and any explicitly entered, redacted crew clarification to the Responses API using `gpt-5.6-terra`, requests a structured draft, validates its source IDs, and keeps the existing citation and human-review gates. Do not use real incident data in this demo adapter.
 
 ### Verify
 

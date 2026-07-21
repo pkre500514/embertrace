@@ -50,12 +50,13 @@ test("proxies selected evidence through a validated GPT-5.6 adapter", async () =
   const server = createAppServer({ aiAdapter: adapter }).listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const response = await fetch(`http://127.0.0.1:${server.address().port}/api/draft`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sourceIds: ["cad", "unknown"] }) });
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/api/draft`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sourceIds: ["cad", "unknown"], crewNotes: ["No civilian assessment documented."] }) });
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body.draft.used_source_ids, ["cad"]);
     assert.equal(requestBody.model, "gpt-5.6-terra");
     assert.equal(requestBody.store, false);
+    assert.match(requestBody.input, /No civilian assessment documented/);
   } finally {
     server.close();
     await once(server, "close");

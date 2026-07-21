@@ -9,7 +9,8 @@ const sourceCatalog = {
   camera: "Helmet camera: Engine 2 entered through the front entry. At 14:11, the visible fire was reported knocked down. Ventilation and overhaul followed.",
   radio: "TAC 3 radio traffic: dispatch and operational traffic from 00:18 through 04:09 supports the response timeline.",
   photos: "Scene photos: three images show smoke conditions, kitchen-area damage, and exterior crew staging. They do not establish origin or cause.",
-  cad: "CAD dispatch record: Metroville Fire Department was dispatched at approximately 14:02 to 418 Juniper Street for a reported residential structure fire."
+  cad: "CAD dispatch record: Metroville Fire Department was dispatched at approximately 14:02 to 418 Juniper Street for a reported residential structure fire.",
+  note: "Crew clarification: an attributed, reviewer-supplied clarification. It requires the same human review as all other evidence."
 };
 const sourceIds = Object.keys(sourceCatalog);
 
@@ -39,8 +40,9 @@ function normalizeDraft(value, allowedSourceIds) {
 
 export function createOpenAIAdapter({ apiKey = process.env.OPENAI_API_KEY, fetchImpl = globalThis.fetch } = {}) {
   if (!apiKey) return null;
-  return async ({ selectedSourceIds }) => {
+  return async ({ selectedSourceIds, crewNotes }) => {
     const evidence = selectedSourceIds.map((id) => ({ id, text: sourceCatalog[id] }));
+    if (crewNotes.length) evidence.push({ id: "note", text: `Crew clarifications (unverified until human review): ${crewNotes.join("\n")}` });
     const apiResponse = await fetchImpl("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
@@ -56,7 +58,7 @@ export function createOpenAIAdapter({ apiKey = process.env.OPENAI_API_KEY, fetch
       })
     });
     if (!apiResponse.ok) throw new Error(`OpenAI request failed (${apiResponse.status})`);
-    return normalizeDraft(JSON.parse((await apiResponse.json()).output_text), selectedSourceIds);
+    return normalizeDraft(JSON.parse((await apiResponse.json()).output_text), [...selectedSourceIds, ...(crewNotes.length ? ["note"] : [])]);
   };
 }
 
@@ -67,10 +69,11 @@ export function createAppServer({ aiAdapter = createOpenAIAdapter() } = {}) {
       if (request.method !== "POST") return response.writeHead(405, { allow: "POST" }).end("Method not allowed");
       if (!aiAdapter) return sendJson(response, 503, { error: "AI_ADAPTER_NOT_CONFIGURED", message: "Set OPENAI_API_KEY on the server to enable the GPT-5.6 adapter." });
       try {
-        const { sourceIds: requestedSourceIds } = await readJson(request);
+        const { sourceIds: requestedSourceIds, crewNotes: requestedCrewNotes } = await readJson(request);
         const selectedSourceIds = [...new Set(Array.isArray(requestedSourceIds) ? requestedSourceIds : [])].filter((id) => sourceIds.includes(id));
         if (!selectedSourceIds.length) return sendJson(response, 400, { error: "NO_EVIDENCE_SELECTED" });
-        return sendJson(response, 200, { draft: await aiAdapter({ selectedSourceIds }) });
+        const crewNotes = (Array.isArray(requestedCrewNotes) ? requestedCrewNotes : []).filter((note) => typeof note === "string").map((note) => note.trim()).filter(Boolean).map((note) => note.slice(0, 1200)).slice(0, 5);
+        return sendJson(response, 200, { draft: await aiAdapter({ selectedSourceIds, crewNotes }) });
       } catch (error) {
         return sendJson(response, 502, { error: "AI_DRAFT_FAILED", message: error instanceof Error ? error.message : "AI draft failed" });
       }
