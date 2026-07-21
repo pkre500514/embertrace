@@ -49,7 +49,7 @@ The tests start the static server on an ephemeral local port, verify the app and
 4. Select crew clarifications to show how new, attributed evidence changes the draft.
 5. Choose **Review & approve**. Complete the two human checks, then print or save a local PDF.
 
-For a narrated recording plan, see [DEMO_VIDEO_SCRIPT.md](./DEMO_VIDEO_SCRIPT.md).
+For a narrated recording plan, see [DEMO_VIDEO_SCRIPT.md](./DEMO_VIDEO_SCRIPT.md). The matching English narration is in [DEMO_NARRATION_EN.txt](./DEMO_NARRATION_EN.txt).
 
 ## Sample data
 

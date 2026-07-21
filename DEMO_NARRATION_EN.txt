@@ -1,0 +1,17 @@
+After a fire, crews should not have to rebuild every minute of an incident from memory. But the details they need are often scattered across helmet cameras, radio traffic, scene photos, dispatch records, and follow-up notes.
+
+EmberTrace is an evidence-grounded report drafting demo for fire crews. It starts with a simulated, de-identified structure-fire case and runs completely locally. There is no API key, no account, no upload, and no real emergency-service data.
+
+The central idea is simple: evidence in, human judgment out. EmberTrace can help organize a report, but it must never invent facts, decide origin or cause, or submit a report automatically.
+
+In this demo, four captured sources are available: a helmet-camera frame, a time-aligned radio transcript, three scene photos, and a CAD dispatch record. When I run the guided demo, EmberTrace cross-checks the selected sources and creates a NERIS-ready draft.
+
+Every supported statement is linked back to the evidence that supports it. The incident summary cites dispatch and radio records. Operations cite the helmet camera and radio traffic. Observations cite the scene photos. When an item is not supported, it stays visibly marked for review instead of being silently filled in.
+
+Crew clarifications can also be added as attributed evidence. In a production system, these could be typed or dictated by the crew after the call. Here, safe prebuilt cards demonstrate the workflow. The important part is that the clarification becomes a cited record, not an invisible edit.
+
+Next, a reviewer opens the final report view. EmberTrace creates a local SHA-256 evidence receipt for the selected material, then requires two human confirmations. The application can prepare the report for supervisor review or print it to PDF, but it does not bypass those checks and does not submit anything.
+
+I built EmberTrace with Codex and GPT-5.6. Codex accelerated the workflow design, the local evidence and citation interactions, the safety boundaries, the guided demo, and the testable submission package. The key decision throughout was to prioritize defensibility over fluent text generation.
+
+EmberTrace is not a replacement for agency policy or human expertise. It is a demonstration of a safer AI-assisted documentation pattern for public safety: preserve the evidence, show the uncertainty, and give crews time back.
