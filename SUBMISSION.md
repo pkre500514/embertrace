@@ -14,13 +14,15 @@ EmberTrace is an evidence-grounded incident-report drafting demo for fire crews.
 
 The prototype cross-checks four simulated, de-identified evidence sources and produces a reviewable report draft. Every supported claim carries a link back to its source. Missing or unsupported information remains visibly marked for review instead of being guessed. Crew clarifications can be added as attributed evidence, and two human confirmation checks are required before the draft is marked ready for supervisor review. The browser also creates local SHA-256 fingerprints for the selected evidence, making the draft's inputs auditable.
 
-EmberTrace runs entirely locally with no API key, account, upload, external model call, or real emergency-service data. It never auto-submits a report, determines origin or cause, or replaces agency policy. It is a demonstration of a safer pattern for AI-assisted public-safety documentation: evidence in, human judgment out.
+EmberTrace runs locally by default with no API key, account, upload, external model call, or real emergency-service data. It also includes an opt-in GPT-5.6 server adapter that can draft from only the selected simulated evidence when a server-side API key is configured. Model output is source-validated and remains behind the same citations and human review gates. It never auto-submits a report, determines origin or cause, or replaces agency policy. It is a demonstration of a safer pattern for AI-assisted public-safety documentation: evidence in, human judgment out.
+
+Future versions can connect an agency-approved GPT-5.6 service to extract structured facts from transcriptions, photos, and incident records. Any model output would remain source-linked, visibly uncertain when unsupported, and subject to the same human review gates.
 
 ### Korean
 
 EmberTrace는 소방대원이 현장 이후 남은 근거 자료를 검토 가능한 보고서 초안으로 정리하도록 돕는 오프라인 데모입니다. 헬멧캠, 무전 전사, 현장 사진, 출동 기록, 대원 후속 메모를 교차확인하고, 초안의 각 주장에 출처를 연결합니다. 근거가 없는 내용은 추측하지 않고 `REVIEW REQUIRED`로 남기며, 최종 검토 전에는 사람의 확인 두 단계를 반드시 거치게 합니다. 선택된 원본 자료는 브라우저에서 SHA-256 지문으로 기록됩니다.
 
-모든 사례와 자료는 가상·비식별이며, API 키·외부 AI 호출·실제 긴급 데이터·자동 제출을 사용하지 않습니다. EmberTrace는 화재 원인·발화 지점·의료 상태를 판단하지 않고, 기관 정책이나 사람의 결정을 대체하지 않습니다.
+모든 사례와 자료는 가상·비식별이며, 기본 흐름은 API 키·외부 AI 호출·실제 긴급 데이터·자동 제출 없이 실행됩니다. 서버에 API 키를 설정하면 선택된 가상 근거만 GPT-5.6 어댑터로 보내 구조화된 초안을 만들 수 있으며, 출처 검증과 사람 검토 단계를 그대로 거칩니다. EmberTrace는 화재 원인·발화 지점·의료 상태를 판단하지 않고, 기관 정책이나 사람의 결정을 대체하지 않습니다.
 
 ## How Codex and GPT-5.6 were used
 

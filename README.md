@@ -33,6 +33,17 @@ npm start
 
 Open <http://localhost:4173>. No package install, API key, account, upload, or network service is required after the repository is cloned.
 
+### Optional GPT-5.6 adapter
+
+The default workflow is fully offline. To enable the optional **Enhance this simulated draft with GPT-5.6** control, set an API key only in the server environment and restart:
+
+```powershell
+$env:OPENAI_API_KEY="your_key_here"
+npm start
+```
+
+The browser never receives the key. The server sends only the selected simulated evidence to the Responses API using `gpt-5.6-terra`, requests a structured draft, validates its source IDs, and keeps the existing citation and human-review gates. Do not use real incident data in this demo adapter.
+
 ### Verify
 
 ```bash
@@ -78,7 +89,7 @@ public/app.js: local rule-based drafting + citation links + browser SHA-256 rece
 editable draft -> mandatory human checks -> print/save or supervisor review
 ```
 
-`server.js` is a dependency-free Node static server. The interaction model and evidence rules live in `public/app.js`. There is no backend database and no external AI request in this demo.
+`server.js` is a dependency-free Node server. The interaction model and evidence rules live in `public/app.js`. By default there is no backend database or external AI request; an opt-in server-side GPT-5.6 adapter is available when `OPENAI_API_KEY` is configured.
 
 ## Built with Codex and GPT-5.6
 

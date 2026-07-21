@@ -46,7 +46,9 @@
           <div id="demoNotes" style="display:grid;gap:6px"></div>
           <p id="noteHint" class="micro" style="margin-top:8px">Production supports direct typed or dictated crew notes. Demo uses safe prebuilt cards.</p>
           <button class="primary" id="analyzeBtn">Cross-check evidence &amp; draft <b>→</b></button>
-          <p class="micro">No API key, upload, or real emergency data is used in this demo.</p>
+          <label class="ai-option"><input type="checkbox" id="aiAssist"> Enhance this simulated draft with GPT-5.6</label>
+          <p class="micro">Optional server-side adapter: only selected simulated evidence is sent. Citations and human review gates remain required.</p>
+          <p class="micro">Without a server API key, the local offline drafting flow remains available.</p>
         </aside>
 
         <section class="report-panel">

@@ -190,7 +190,25 @@ function draft() {
   report.innerHTML = `<section class="report-section"><h3>${ko ? "사건 요약" : "INCIDENT SUMMARY"}</h3><p>${summary}</p></section><section class="report-section"><h3>${ko ? "현장 활동" : "OPERATIONS"}</h3><p>${operations}</p></section><section class="report-section"><h3>${ko ? "관찰 기록" : "OBSERVATIONS"}</h3><p>${observations}</p></section>${noteSection}${addendum}<aside class="review"><b>${ko ? "확인 필요" : "REVIEW REQUIRED"}</b><br>${missing}</aside>`;
   state.textContent = text[language].ready; state.style.background="#d8efdf"; state.style.color="#1a5e4b"; approve.disabled=false; proof.hidden=false;
 }
-analyze.addEventListener("click", () => { analyze.disabled=true; analyze.innerHTML=text[language].checking; state.textContent=language === "ko" ? "4개 근거 기록 확인 중" : "Checking 4 source records"; setTimeout(() => { isDrafted=true; draft(); analyze.innerHTML=language === "ko" ? "초안 생성됨 <b>✓</b>" : "Draft generated <b>✓</b>"; },700); });
+const escapeHtml = (value) => String(value).replace(/[&<>"]/g, (character) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[character]);
+function renderAiDraft(draft) {
+  const ko = language === "ko";
+  const links = draft.used_source_ids.map((id) => citation(evidenceDetails[language][id][0], id)).join(" ");
+  const reviews = draft.review_required.length ? draft.review_required.map(escapeHtml).join("<br>") : (ko ? "모델 출력은 사람 검토가 필요합니다." : "Model output requires human review.");
+  report.innerHTML = `<section class="report-section"><h3>${ko ? "사건 요약 · GPT-5.6 초안" : "INCIDENT SUMMARY · GPT-5.6 DRAFT"}</h3><p>${escapeHtml(draft.summary)} ${links}</p></section><section class="report-section"><h3>${ko ? "현장 활동" : "OPERATIONS"}</h3><p>${escapeHtml(draft.operations)}</p></section><section class="report-section"><h3>${ko ? "관찰 기록" : "OBSERVATIONS"}</h3><p>${escapeHtml(draft.observations)}</p></section><aside class="review"><b>${ko ? "확인 필요" : "REVIEW REQUIRED"}</b><br>${reviews}</aside>`;
+  state.textContent = ko ? "GPT-5.6 초안 준비됨 · 사람 검토 필요" : "GPT-5.6 draft ready · human review required";
+}
+async function enhanceWithAi() {
+  try {
+    const response = await fetch("/api/draft", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ sourceIds:[...selectedSources] }) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || result.error || "AI adapter unavailable");
+    renderAiDraft(result.draft);
+  } catch (error) {
+    showToast(language === "ko" ? `GPT-5.6 어댑터를 사용할 수 없습니다: ${error.message}` : `GPT-5.6 adapter unavailable: ${error.message}`);
+  }
+}
+analyze.addEventListener("click", () => { analyze.disabled=true; analyze.innerHTML=text[language].checking; state.textContent=language === "ko" ? "4개 근거 기록 확인 중" : "Checking 4 source records"; setTimeout(async () => { isDrafted=true; draft(); if ($("#aiAssist").checked) await enhanceWithAi(); analyze.disabled=false; analyze.innerHTML=language === "ko" ? "초안 생성됨 <b>✓</b>" : "Draft generated <b>✓</b>"; },700); });
 approve.addEventListener("click", openFinalReview);
 $("#confirmSources").addEventListener("change", updateReadyState);
 $("#confirmCasualty").addEventListener("change", updateReadyState);
