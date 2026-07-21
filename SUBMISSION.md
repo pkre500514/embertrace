@@ -4,7 +4,7 @@ Replace every `<PLACEHOLDER>` before submitting.
 
 ## Category
 
-Choose **Productivity** if it is available in the event's category list. EmberTrace reduces the administrative reconstruction work that follows an incident while preserving human review and source traceability. If the event uses a different label, choose the closest category for **public-service workflow / productivity**.
+Choose **Work and Productivity**. EmberTrace reduces the administrative reconstruction work that follows an incident while preserving human review and source traceability.
 
 ## Project description
 
